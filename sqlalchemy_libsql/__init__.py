@@ -48,8 +48,11 @@ _registry.register(
 )
 
 
-def _build_connection_url(url, query, secure):
+def _build_connection_url(url, query, secure, encryption_key=None):
     # sorting of keys is for unit test support
+    if encryption_key:
+        query["encryption_key"] = encryption_key
+
     query_str = urllib.parse.urlencode(sorted(query.items()))
 
     if not url.host:
@@ -89,7 +92,7 @@ class SQLiteDialect_libsql(SQLiteDialect_pysqlite):
 
     @classmethod
     def import_dbapi(cls):
-        from libsql_client import dbapi2 as libsql_client
+        from libsql_experimental as libsql_client
 
         return libsql_client
 
@@ -113,8 +116,9 @@ class SQLiteDialect_libsql(SQLiteDialect_pysqlite):
             ("isolation_level", str),
             ("detect_types", int),
             ("check_same_thread", bool),
-            ("cached_statements", int),
+            ("cached_statements", int),a
             ("secure", bool),  # LibSQL extra, selects between ws and wss
+            ("encryption_key", str), # LibSQL extra, encryption key for SQLite file
         )
         opts = url.query
         libsql_opts = {}
@@ -139,7 +143,8 @@ class SQLiteDialect_libsql(SQLiteDialect_pysqlite):
                 uri_opts.pop(key, None)
 
             secure = libsql_opts.pop("secure", False)
-            connect_url = _build_connection_url(url, uri_opts, secure)
+            encryption_key = libsql_opts.pop("encryption_key", None)
+            connect_url = _build_connection_url(url, uri_opts, secure, encryption_key)
         else:
             connect_url = url.database or ":memory:"
             if connect_url != ":memory:":
