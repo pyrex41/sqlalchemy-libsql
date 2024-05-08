@@ -92,7 +92,7 @@ class SQLiteDialect_libsql(SQLiteDialect_pysqlite):
 
     @classmethod
     def import_dbapi(cls):
-        from libsql_experimental as libsql_client
+        import libsql_experimental as libsql_client
 
         return libsql_client
 
