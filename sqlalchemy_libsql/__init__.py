@@ -116,7 +116,7 @@ class SQLiteDialect_libsql(SQLiteDialect_pysqlite):
             ("isolation_level", str),
             ("detect_types", int),
             ("check_same_thread", bool),
-            ("cached_statements", int),a
+            ("cached_statements", int),
             ("secure", bool),  # LibSQL extra, selects between ws and wss
             ("encryption_key", str), # LibSQL extra, encryption key for SQLite file
         )
